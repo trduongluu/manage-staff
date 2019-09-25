@@ -1,0 +1,106 @@
+
+<header><h2>Staff list application</h2></header>
+
+<div class="features">
+  <button nz-button nzType="primary" [nzSize]="" nzShape="circle" (click)="showModal()">
+    <i nz-icon nzType="plus" nzTheme=""></i>
+  </button>
+  
+  <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+    <input #searchValue type="text" nz-input placeholder="Search in table" [(ngModel)]="searchString" (keyup)="searchStaff()" />
+  </nz-input-group>
+  <ng-template #suffixIconButton>
+    <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
+  </ng-template>
+</div>
+
+<nz-table #staffTable nzShowSizeChanger 
+[nzData]="notSearch? staffs : staffSearchList" [nzPageSize]="pageSize" 
+[nzPageIndex]="pageIndex" (nzPageIndexChange)="trackPageIndex($event)" [nzPageSizeOptions]="[5,10,15,20]">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Mail</th>
+      <th>Phone</th>
+      <th>Address</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of staffTable.data; index as i">
+      <td>{{ data.id }}</td>
+      <td>{{ data.name }}</td>
+      <td>{{ data.email }}</td>
+      <td>{{ data.phone }}</td>
+      <td>{{ data.address }}</td>
+      <td>
+        <button nz-button nzType="dashed" (click)="modalEditPopup(i)">Edit</button>
+        <button nz-button nzType="dashed" (click)="showDeleteConfirm(i)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<!-- Modals that popup -->
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="modalTitle"
+  [nzContent]="modalContent"
+  [nzFooter]="null"
+  (nzOnCancel)="handleCancel()"
+>
+  <ng-template #modalTitle>
+    Add new Staff
+  </ng-template>
+
+  <ng-template #modalContent>
+    <!-- Form area -->
+    <form #newStaffForm="ngForm" nz-form [formGroup]="validateForm" (ngSubmit)="submitForm(validateForm.value)">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="email" nzRequired>E-mail</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback [nzErrorTip]="emailErrorTpl">
+          <input nz-input id="email" formControlName="email" type="email" name="email" />
+          <ng-template #emailErrorTpl let-control>
+            <ng-container *ngIf="control.hasError('email')">
+              The input is not valid E-mail!
+            </ng-container>
+            <ng-container *ngIf="control.hasError('required')">
+              Please input your E-mail!
+            </ng-container>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" nzRequired>Name</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input your name!">
+          <input nz-input id="name" formControlName="name" name="name" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phone" nzRequired>Phone</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input your phone!">
+          <input nz-input id="phone" formControlName="phone" name="phone" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="address" nzRequired>Address</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input your address!">
+          <input nz-input id="address" formControlName="address" name="address" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control [nzSpan]="14" [nzOffset]="6">
+          <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
+          <button nz-button nzType="primary" (click)="handleSubmit()" [nzLoading]="isConfirmLoading" class="sbmit">Submit</button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+
+  </ng-template>
+
+  <!-- <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
+    <button nz-button nzType="primary" (click)="handleSubmit()" [nzLoading]="isConfirmLoading">Submit</button>
+  </ng-template> -->
+</nz-modal>

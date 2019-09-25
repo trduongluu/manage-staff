@@ -1,0 +1,40 @@
+
+header {
+    margin: 20px auto 0px;
+    >h2 {
+        font-family: Montserrat;
+        text-transform: uppercase;
+        font-weight: bold;
+        margin: 0;
+        text-align: center;
+        color: rgb(129, 30, 228);
+    }
+}
+
+.features {
+    display: flex;
+    width: 50%;
+    margin: 20px auto;
+    button {
+        background-color: rgb(129, 30, 228);
+    }
+    >button {
+        margin-right: 5px;
+    }
+}
+
+nz-table {
+    th {
+        background-color: rebeccapurple;
+        color: white;
+    }
+}
+
+form {
+    button {
+        margin-right: 10px;
+    }
+    .sbmit {
+        background-color: rgb(129, 30, 228);
+    }
+}
