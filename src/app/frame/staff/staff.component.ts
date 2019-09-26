@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd';
-import { StaffService, staff } from './staff.service';
+import { StaffService } from './staff.service';
+import { staff } from './staff';
 
 @Component({
   selector: 'app-staff',
@@ -168,7 +169,8 @@ export class StaffComponent implements OnInit {
     // this.serviceAction.getStaff().subscribe(data => {
     //   this.staffs = data;
     // });
-    this.staffs = this.serviceAction.getStaffs();
+    this.serviceAction.getStaffs().subscribe(data => this.staffs = data);
+    console.log(JSON.stringify(this.staffs));
   }
 
 }
