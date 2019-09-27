@@ -1,8 +1,7 @@
-export interface staff {
-  id: Int32Array;
+export interface Staff {
   staffId: string;
   name: string;
   email: string;
-  phone: Int32Array;
+  phone: number;
   address: string;
 }

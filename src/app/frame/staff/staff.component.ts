@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd';
 import { StaffService } from './staff.service';
-import { staff } from './staff';
+import { Staff } from './staff';
 
 @Component({
-  selector: 'app-staff',
-  templateUrl: './staff.component.html',
-  styleUrls: ['./staff.component.scss']
+  selector: "app-staff",
+  templateUrl: "./staff.component.html",
+  styleUrls: ["./staff.component.scss"]
 })
 export class StaffComponent implements OnInit {
   // array sample
-  staffs: staff[];
+  staffs: Staff[];
   // Modal variables
   isVisible = false;
   isConfirmLoading = false;
@@ -28,14 +28,48 @@ export class StaffComponent implements OnInit {
   // Edit variables
   editingId: number;
 
+  constructor(
+    private modalService: NzModalService,
+    private fb: FormBuilder,
+    private serviceAction: StaffService
+  ) {
+    this.validateForm = this.fb.group({
+      name: ["", [Validators.required]],
+      email: ["", [Validators.email, Validators.required]],
+      phone: ["", [Validators.required]],
+      address: ["", [Validators.required]]
+    });
+  }
+
+  ngOnInit() {
+    this.getData();
+
+    // await this.serviceAction.getStaffs().toPromise().then(x => {
+    //   this.staffs = x;
+    //   console.log(x);
+    // });
+  }
+
+  // Service data interaction
+  getData() {
+    this.serviceAction.getStaffs().subscribe(data => {
+      this.staffs = data;
+      console.log(data);
+    });
+  }
+  
   // 5 Modal add interaction
   showModal(): void {
     this.isVisible = true;
   }
 
   addNewStaff(value: any): void {
-    const newStaff: any = {id: `random00${this.staffs.length + 1}`, ...value};
-    this.staffs.push(newStaff);
+    const newStaff: any = {
+      staffId: `random00${this.staffs.length + 1}`,
+      ...value
+    };
+    // this.staffs.push(newStaff);
+    this.serviceAction.postStaff(newStaff).subscribe(data => this.getData());
 
     setTimeout(() => {
       const modal = this.modalService.success({
@@ -95,20 +129,21 @@ export class StaffComponent implements OnInit {
 
   showDeleteConfirm(i: number): void {
     this.modalService.confirm({
-      nzTitle: 'Are you sure delete this task?',
-      nzContent: '<b style="color: red;">This action will permanently delete the data.</b>',
-      nzOkText: 'Yes',
-      nzOkType: 'danger',
+      nzTitle: "Are you sure delete this task?",
+      nzContent:
+        '<b style="color: red;">This action will permanently delete the data.</b>',
+      nzOkText: "Yes",
+      nzOkType: "danger",
       nzOnOk: () => this.deleteRow(i),
-      nzCancelText: 'No',
-      nzOnCancel: () => console.log('Canceled')
+      nzCancelText: "No",
+      nzOnCancel: () => console.log("Canceled")
     });
   }
 
   // 2 update info interaction
   modalEditPopup(i: number): void {
     const num = (this.pageIndex - 1) * this.pageSize + i;
-    const selectedOne: staff = this.staffs.find((_, index) => index === num);
+    const selectedOne: Staff = this.staffs.find((_, index) => index === num);
     this.validateForm.setValue({
       name: selectedOne.name,
       email: selectedOne.email,
@@ -144,7 +179,11 @@ export class StaffComponent implements OnInit {
           let isFound = false;
           // tslint:disable-next-line:forin
           for (const key in obj) {
-            if ((obj[key] as string).toLowerCase().indexOf(this.searchString.toLowerCase()) !== -1) {
+            if (
+              (obj[key] as string)
+                .toLowerCase()
+                .indexOf(this.searchString.toLowerCase()) !== -1
+            ) {
               isFound = true;
             }
           }
@@ -152,25 +191,7 @@ export class StaffComponent implements OnInit {
         });
         console.log(this.staffSearchList);
       }, 1000);
-    // tslint:disable-next-line:curly
+      // tslint:disable-next-line:curly
     } else this.notSearch = true;
   }
-
-  constructor(private modalService: NzModalService, private fb: FormBuilder, private serviceAction: StaffService) {
-    this.validateForm = this.fb.group({
-      name: ['', [Validators.required]],
-      email: ['', [Validators.email, Validators.required]],
-      phone: ['', [Validators.required]],
-      address: ['', [Validators.required]]
-    });
-  }
-
-  ngOnInit() {
-    // this.serviceAction.getStaff().subscribe(data => {
-    //   this.staffs = data;
-    // });
-    this.serviceAction.getStaffs().subscribe(data => this.staffs = data);
-    console.log(JSON.stringify(this.staffs));
-  }
-
 }
