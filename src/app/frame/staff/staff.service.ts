@@ -26,7 +26,14 @@ export class StaffService {
   postStaff(s: Staff): Observable<Staff> {
     return this.http.post<Staff>(this.staffAPI, s);
   }
-  updateStaff() {}
-  deleteStaff() {}
+  updateStaff(s: Staff): Observable<Staff> {
+    return this.http.put(this.staffAPI, s);
+  }
+  deleteStaff(s: Staff | number): Observable<Staff> {
+    const sId = typeof s === 'number' ? s : s.staffId;
+    const url = `${this.staffAPI}/${sId}`;
+
+    return this.http.delete<Staff>(url);
+  }
   searchStaff() {}
 }
