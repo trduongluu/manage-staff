@@ -15,7 +15,6 @@ import { Staff } from './staff';
   styleUrls: ['./staff.component.scss']
 })
 export class StaffComponent implements OnInit {
-  // array sample
   staffs: Staff[];
   // Modal variables
   isVisible = false;
@@ -30,7 +29,8 @@ export class StaffComponent implements OnInit {
   // Delet variables
   paging = {
     pageSize: 5,
-    pageIndex: 1
+    pageIndex: 1,
+    total: 0
   };
   // Edit variables
   editingId: number;
@@ -57,16 +57,14 @@ export class StaffComponent implements OnInit {
     // });
   }
 
-  currentPageDataChange($event: Array<{ id: number; name: string; age: number; address: string }>): void {
-    this.getData();
-  }
   // Service data interaction
   getData() {
     this.serviceAction
       .getStaffs(this.paging.pageIndex, this.paging.pageSize)
-      .subscribe(data => {
-        this.staffs = data;
-        console.log(data);
+      .subscribe(res => {
+        this.staffs = res.data;
+        this.paging.total = res.total;
+        console.log(JSON.stringify(res));
       });
   }
 
@@ -122,7 +120,9 @@ export class StaffComponent implements OnInit {
 
   // 3 Delete staff interaction
   trackPageIndex(value: any) {
+    console.log(value);
     this.paging.pageIndex = value;
+    this.getData();
   }
 
   deleteRow(index: number): void {
@@ -187,32 +187,37 @@ export class StaffComponent implements OnInit {
     }, 1000);
   }
 
-  // 1 Search interaction
+  // 2 Search interaction
   searchStaff(): void {
-    this.serviceAction.searchStaff(this.paging.pageIndex, this.paging.pageSize, this.searchString).subscribe(data => this.staffs = data);
+    this.serviceAction.searchStaff(this.paging.pageIndex, this.paging.pageSize, this.searchString).subscribe(res => {
+      this.staffs = res.data;
+      this.paging.total = res.total;
+      console.log(JSON.stringify(res));
+    });
   }
-  // searchStaff(): void {
-  //   if (this.searchString.length > 0) {
-  //     this.notSearch = false;
-  //     clearTimeout(this.timer);
-  //     this.timer = setTimeout(() => {
-  //       this.staffSearchList = this.staffs.filter((obj, i) => {
-  //         let isFound = false;
-  //         // tslint:disable-next-line:forin
-  //         for (const key in obj) {
-  //           if (
-  //             (obj[key] as string)
-  //               .toLowerCase()
-  //               .indexOf(this.searchString.toLowerCase()) !== -1
-  //           ) {
-  //             isFound = true;
-  //           }
-  //         }
-  //         return isFound;
-  //       });
-  //       console.log(this.staffSearchList);
-  //     }, 1000);
-  //     // tslint:disable-next-line:curly
-  //   } else this.notSearch = true;
-  // }
+
+  searchLocal(): void {
+    if (this.searchString.length > 0) {
+      this.notSearch = false;
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.staffSearchList = this.staffs.filter((obj, i) => {
+          let isFound = false;
+          // tslint:disable-next-line:forin
+          for (const key in obj) {
+            if (
+              (obj[key] as string)
+                .toLowerCase()
+                .indexOf(this.searchString.toLowerCase()) !== -1
+            ) {
+              isFound = true;
+            }
+          }
+          return isFound;
+        });
+        console.log(this.staffSearchList);
+      }, 1000);
+      // tslint:disable-next-line:curly
+    } else this.notSearch = true;
+  }
 }

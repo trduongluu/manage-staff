@@ -21,8 +21,8 @@
     />
   </nz-input-group>
   <ng-template #suffixIconButton>
-    <button nz-button nzType="primary" nzSearch>
-      <i nz-icon nzType="search" (click)="searchStaff()"></i>
+    <button nz-button nzType="primary" nzSearch (click)="searchStaff()">
+      <i nz-icon nzType="search"></i>
     </button>
   </ng-template>
 </div>
@@ -30,12 +30,13 @@
 <nz-table
   #staffTable
   nzShowSizeChanger
-  [nzData]="notSearch ? staffs : staffSearchList"
+  [nzData]="staffs"
+  [nzFrontPagination]="false"
   [nzPageSize]="paging.pageSize"
   [nzPageIndex]="paging.pageIndex"
+  [nzTotal]="paging.total"
   (nzPageIndexChange)="trackPageIndex($event)"
   [nzPageSizeOptions]="[5, 10, 15, 20]"
-  (nzCurrentPageDataChange)="currentPageDataChange($event)"
 >
   <thead>
     <tr>
